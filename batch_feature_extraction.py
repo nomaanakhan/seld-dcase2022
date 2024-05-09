@@ -23,7 +23,7 @@ def main(argv):
     dev_feat_cls.preprocess_features()
 
     # # Extract labels
-    dev_feat_cls.extract_all_labels()
+    # dev_feat_cls.extract_all_labels()
 
 if __name__ == "__main__":
     try:

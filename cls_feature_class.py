@@ -64,9 +64,9 @@ class FeatureClass:
         self._use_salsalite = params['use_salsalite']
         if self._use_salsalite and self._dataset=='mic':
             # Initialize the spatial feature constants
-            self._lower_bin = np.int(np.floor(params['fmin_doa_salsalite'] * self._nfft / np.float(self._fs)))
+            self._lower_bin = int(np.floor(params['fmin_doa_salsalite'] * self._nfft / float(self._fs)))
             self._lower_bin = np.max((1, self._lower_bin))
-            self._upper_bin = np.int(np.floor(np.min((params['fmax_doa_salsalite'], self._fs//2)) * self._nfft / np.float(self._fs)))
+            self._upper_bin = int(np.floor(np.min((params['fmax_doa_salsalite'], self._fs//2)) * self._nfft / float(self._fs)))
 
 
             # Normalization factor for salsalite
@@ -77,7 +77,7 @@ class FeatureClass:
             self._freq_vector = self._freq_vector[None, :, None]  # 1 x n_bins x 1 
 
             # Initialize spectral feature constants
-            self._cutoff_bin = np.int(np.floor(params['fmax_spectra_salsalite'] * self._nfft / np.float(self._fs)))
+            self._cutoff_bin = int(np.floor(params['fmax_spectra_salsalite'] * self._nfft / float(self._fs)))
             assert self._upper_bin <= self._cutoff_bin, 'Upper bin for doa featurei {} is higher than cutoff bin for spectrogram {}!'.format()
             self._nb_mel_bins = self._cutoff_bin-self._lower_bin 
         else:
@@ -109,7 +109,13 @@ class FeatureClass:
 
     def _load_audio(self, audio_path):
         fs, audio = wav.read(audio_path)
+        print("###########")
+        print(audio_path)
+        # print(audio)
+        # print("###########")
+        # print(fs)
         audio = audio[:, :self._nb_channels] / 32768.0 + self._eps
+        # exit()
         return audio, fs
 
     # INPUT FEATURES

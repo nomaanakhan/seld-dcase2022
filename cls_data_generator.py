@@ -78,9 +78,12 @@ class DataGenerator(object):
         print('Computing some stats about the dataset')
         max_frames, total_frames, temp_feat = -1, 0, []
         for filename in os.listdir(self._feat_dir):
+            print(filename)
+            print(int(filename[4]))
+            print(self._splits)
             if int(filename[4]) in self._splits: # check which split the file belongs to
                 self._filenames_list.append(filename)
-                    
+                print("HERE")
                 temp_feat = np.load(os.path.join(self._feat_dir, filename))
                 total_frames += (temp_feat.shape[0] - (temp_feat.shape[0] % self._feature_seq_len))
                 if temp_feat.shape[0]>max_frames:

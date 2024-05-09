@@ -35,7 +35,7 @@ def main(argv):
     dump_figures = True
 
     # CHOOSE THE MODEL WHOSE OUTPUT YOU WANT TO VISUALIZE 
-    checkpoint_name = "models/1_1_foa_dev_split6_model.h5"
+    checkpoint_name = "models/1_1_dev_split0_accdoa_foa_model.h5"
     model = seldnet_model.CRNN(data_in, data_out, params)
     model.eval()
     model.load_state_dict(torch.load(checkpoint_name, map_location=torch.device('cpu')))
