@@ -14,7 +14,7 @@ class DataGenerator(object):
     def __init__(
             self, params, split=1, shuffle=True, per_file=False, is_eval=False
     ):
-        self._per_file = per_file
+        self._per_file = False #per_file
         self._is_eval = is_eval
         self._splits = np.array(split)
         self._batch_size = params['batch_size']
@@ -81,6 +81,7 @@ class DataGenerator(object):
             print(filename)
             print(int(filename[4]))
             print(self._splits)
+            self._splits = [1]
             if int(filename[4]) in self._splits: # check which split the file belongs to
                 self._filenames_list.append(filename)
                 print("HERE")
@@ -129,10 +130,10 @@ class DataGenerator(object):
         # to be the same exactly for all epoch's hence we keep it here.
         self._circ_buf_feat = deque()
         self._circ_buf_label = deque()
-
+        print("here")
         file_cnt = 0
         if self._is_eval:
-            for i in range(self._nb_total_batches):
+            for i in range(self._nb_total_batches) + 1:
                 # load feat and label to circular buffer. Always maintain atleast one batch worth feat and label in the
                 # circular buffer. If not keep refilling it.
                 while len(self._circ_buf_feat) < self._feature_batch_seq_len:
@@ -160,16 +161,19 @@ class DataGenerator(object):
                 # Split to sequences
                 feat = self._split_in_seqs(feat, self._feature_seq_len)
                 feat = np.transpose(feat, (0, 2, 1, 3))
-
+                print("")
                 yield feat
 
         else:
+            self._nb_total_batches = 1
             for i in range(self._nb_total_batches):
 
                 # load feat and label to circular buffer. Always maintain atleast one batch worth feat and label in the
                 # circular buffer. If not keep refilling it.
                 while len(self._circ_buf_feat) < self._feature_batch_seq_len:
+                    featFile = os.path.join(self._feat_dir, self._filenames_list[file_cnt])
                     temp_feat = np.load(os.path.join(self._feat_dir, self._filenames_list[file_cnt]))
+                    labelFile = os.path.join(self._label_dir, self._filenames_list[file_cnt])
                     temp_label = np.load(os.path.join(self._label_dir, self._filenames_list[file_cnt]))
                     if not self._per_file: 
                         # Inorder to support variable length features, and labels of different resolution. 
@@ -200,7 +204,7 @@ class DataGenerator(object):
                         for l_row in extra_labels:
                             self._circ_buf_label.append(l_row)
 
-                    file_cnt = file_cnt + 1
+                    # file_cnt = file_cnt + 1
 
                 # Read one batch size from the circular buffer
                 feat = np.zeros((self._feature_batch_seq_len, self._nb_mel_bins * self._nb_ch))
